@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<link href="style.css" rel="stylesheet">
+<head>
+<meta charset="UTF-8">
+<title>Submit A Bid</title>
+
+<style>
+
+ 	/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.frame {
+	margin: auto;
+	padding: 18px;
+    background-color: white;
+    max-width: 800px;
+}
+
+input:focus { outline: none; border: 2px solid #ff7b00;}
+
+.frame0{
+	margin: auto;
+	width: 50px;
+	display: block;
+	padding: 20px;
+	align-left: auto;
+	align-right: auto;
+	width: 80%;
+}
+
+.fs {
+	font-family: Avenir;
+	font-size: 20px;
+  	-webkit-text-size-adjust: 100%;
+  	-webkit-font-smoothing: antialiased;
+}
+
+.br {
+	border-radius: 0;
+	border: 2px solid #06118c;
+}
+
+.dst {
+	margin: 2px;
+	padding: 2px;
+}
+
+.ninput {
+	border-radius: 0;
+	border: 2px solid #06118c;
+}
+
+.ninput-label {
+	color: #e8e8e8;
+	background-color: #06118c;
+}
+
+.sbutton {
+	color: #06118c;
+	background-color: white;
+}
+
+.sbutton:hover {
+	color: #ff7b00;
+	border: 2px solid #ff7b00;
+}
+
+</style>
+
+</head>
+<body  class = "fs">
+<div class="frame br">
+	New Bid (0 < Bid <= 14)
+	<form class="bid" method="POST" action="new-bid">
+	  <div class="form-group">
+	    <div class="frame0" modelAttribute="bid">
+	      <label class = "ninput-label fs br dst">EUR</label>
+	      <br>
+	      <input class = "ninput fs br dst" type="number" min = "0" max = "14" step = 0.01 name="value" id="value">
+	      <button class = "sbutton fs br dst" id = "bidButton" value = "Submit Bid">
+		    Submit
+		  </button>
+	    </div>
+	  </div>
+	</form>
+</div>
+</body>
+</html>

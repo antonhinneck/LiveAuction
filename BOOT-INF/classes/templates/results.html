@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Results</title>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+var bids;
+
+async function async_query_all_bids(resolve, reject){
+    var url_dataset = "/rest/all-bids";
+    var req = new XMLHttpRequest();
+    req.overrideMimeType("application/json");
+    req.open('GET', url_dataset, true);
+    req.onload  = await function() {
+       var jsonResponse = JSON.parse(req.responseText);
+       resolve(jsonResponse);
+    };
+    req.send(null);
+}
+
+function get_all_bids(){
+    
+    var all_bids = new Promise(function(reject, resolve){
+        async_query_all_bids(reject, resolve);
+    });
+    
+    return all_bids;
+}
+
+function sorter(a, b) {
+	  if (a < b) return -1;  // any negative number works
+	  if (a > b) return 1;   // any positive number works
+	  return 0; // equal values MUST yield zero
+	}
+
+function init(){
+	get_all_bids().then(function (all_bids){
+		bids = all_bids;
+		
+		var vals1d = new Array();
+		bids.forEach(bid => {vals1d.push(bid.value)});
+		vals1d.sort(sorter);
+		
+		var ctr = 1;
+		var vals2d = new Array();
+		vals1d.forEach(bid => {vals2d.push(new Array(ctr, bid)); ctr += 1});
+		
+		var min = 30;
+		bids.forEach(bid => {if (bid.value < min) {min = bid.value;}});
+		
+	    google.charts.load('current', {'packages':['corechart']});
+	    google.charts.setOnLoadCallback(drawChart);
+
+	      function drawChart() {
+	        var data = new google.visualization.DataTable();
+	        data.addColumn("number","#");
+	        data.addColumn("number", "Bid [EUR]");
+	        data.addRows(vals2d);
+
+	        var options = {
+	          title: 'Supply Function',
+	          fontSize: 18,
+	          hAxis: {title: '# of batteries', minValue: 0, maxValue: 30},
+	          vAxis: {title: 'Bid [EUR]', minValue: 0, maxValue: 10},
+	          legend: 'none'
+	        };
+
+	        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+
+	        chart.draw(data, options);
+	        
+	        document.getElementById("minval").innerHTML = "Min: " + min + " EUR";
+	      }
+	});
+}
+
+
+</script>
+
+<style>
+
+
+ 	/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.frame {
+	margin: auto;
+	padding: 20px;
+    background-color: white;
+    max-width: 800px;
+}
+
+input:focus { outline: none; border: 2px solid #ff7b00;}
+
+.frame0{
+	margin: auto;
+	display: block;
+	padding: 20px;
+	align-left: auto;
+	align-right: auto;
+	max-width: 700px;
+}
+
+.fs {
+	font-family: Avenir;
+	font-size: 18px;
+  	-webkit-text-size-adjust: 100%;
+  	-webkit-font-smoothing: antialiased;
+}
+
+.br {
+	border-radius: 0;
+	border: 2px solid #06118c;
+}
+
+.dst {
+	margin: 2px;
+	padding: 2px;
+}
+
+.ninput {
+	border-radius: 0;
+	border: 2px solid #06118c;
+}
+
+.ninput-label {
+	color: #e8e8e8;
+	background-color: #06118c;
+}
+
+.sbutton {
+	color: #06118c;
+	background-color: white;
+}
+
+.sbutton:hover {
+	color: #ff7b00;
+	border: 2px solid #ff7b00;
+}
+
+.chart {
+	margin: auto;
+	display: block;
+	padding: 10px;
+	width:100%;
+}
+
+.bid {
+	margin: auto;
+	display: block;
+	padding: 10px;
+	align-left: auto;
+	align-right: auto;
+	max-width: 700px;
+}
+
+</style>
+
+</head>
+<body onload="init()" class = "fs">
+<div class="frame br">
+	Results (0 < Bid <= 14)<br>
+	<div id="minval"></div>
+	<div id="chart_div" class="chart fs" style="width: 100%; height: 500px;"></div>
+</div>
+<form class="bid chart" method="POST" action="results">
+<input type="password" name = "password" class = "ninput br fs dst" style = "background-color: white;"><button class = "sbutton br fs dst">Wipe DB</button>
+</form>
+</body>
+</html>
